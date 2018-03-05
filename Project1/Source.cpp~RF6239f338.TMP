@@ -1,0 +1,107 @@
+#define  _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <map>
+/*class A{public:	class Iterator	{		double value;	public:		operator double* ()		{			return &value;		}	};	double* pBuffer;	Iterator begin;	Iterator end;};*///1.Считать файл.
+//2.Вычленить из произвольного буффера слово и занести в МАп
+//3.Вывести Мап в файл.
+// COM технология API
+
+	/*A a;
+	A::Iterator it1 = a.begin;
+	*it1 = 5;*/
+
+	
+
+
+
+int main()
+{
+
+	typedef std::map <std::string, int> WordMap;
+	WordMap wordMap;
+	std::string currentWord;
+	currentWord = "";
+	/*	for (it = wordMap.begin(); it != wordMap.end(); it++)
+	{
+		printf("%s %d\n", it->first.c_str(), it->second);
+	}*/
+
+	char pBuffer[4096];
+	FILE* pFile = fopen("C:/dev/Books/1.txt", "r");
+
+	if (pFile == NULL) 
+	{
+		printf("Cannot open file\n");
+		return -1;
+	}
+	int readed = fread(pBuffer, 1, 4096, pFile);
+
+	int i = 0;
+
+	while (true)
+	{
+
+		if(i == readed) // если дошли до конца буффера, считываем новый кусок
+		{
+		int readed = fread(pBuffer, 1, 4096, pFile);
+		i = 0;
+	    }
+
+		if (isalpha(pBuffer[i])) // Очень коряво выглядит
+		{
+			currentWord = currentWord + pBuffer[i];
+		}
+
+		if (isalpha(pBuffer[i]) && !isalpha(pBuffer[i + 1])) // определение конца слова
+		{
+			
+			WordMap::iterator it = wordMap.find(currentWord);
+			
+			if (it == wordMap.end()) 
+			{
+				wordMap.insert(std::make_pair(currentWord, 1));
+				currentWord = "";
+			}
+			else
+			{
+				it->second++;
+			}
+		}
+		i++;
+	}
+	//if  feof(pFile)
+	
+	//fclose(pFile);
+	//printf("Content: %s", pBuffer);
+
+
+	/*pFile = fopen("C:/dev/2.txt", "w");
+
+	if (pFile == NULL)
+	{
+		printf("Cannot open file\n");
+		return -1;
+	}
+
+	struct MyStruct
+	{
+		double x;
+		double y;
+	};
+	MyStruct S;
+	S.x = 5;
+	S.y = 6;
+	//fprintf(pFile, "%s", pBuffer);
+	//fwrite(pBuffer, 1, readed, pFile);
+	fwrite(&S, sizeof(MyStruct), 1, pFile);
+	fclose(pFile);
+
+	MyStruct R;
+
+	pFile = fopen("C:/dev/2.txt", "r");
+	fread(&R, sizeof(MyStruct), 1, pFile);
+	fclose(pFile);*/
+	return 0;
+}
