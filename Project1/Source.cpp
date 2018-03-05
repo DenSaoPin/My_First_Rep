@@ -1,4 +1,6 @@
 #define  _CRT_SECURE_NO_WARNINGS
+
+#include <boost/bimap.hpp>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -40,13 +42,21 @@ void SaveWord()
 
 int main()
 {
+	typedef boost::bimap < std::string, int > bm_type;
+	bm_type biWordMap;
 
-	typedef std::map <std::string, int> WordMap;
-	WordMap wordMap;
-	WordMap::iterator it;
+	//bm_type::const_iterator biIter;
+	bm_type::left_const_iterator biLeftIter;
+	bm_type::right_const_iterator biRightIter;
+
+
+	//typedef std::map <std::string, int> WordMap;
+	//WordMap wordMap;
+	//WordMap::iterator it;
 	std::string currentWord;
 	currentWord = "";
 	char pBuffer[750000];
+
 	FILE* pFile = fopen("C:/dev/Books/1.txt", "r");
 
 	if (pFile == NULL) 
@@ -62,76 +72,17 @@ int main()
 Первое исполнение.
 ---------------------------------------------------------------------------------------------------------
 
-	while (true)
-	{
-		
-		if(i == readed) // если дошли до конца буффера, считываем новый кусок
-		{
-			if (feof(pFile)) // если мы в конце файла и все из буффера считано
-			{
-
-				fclose(pFile);
-				break;
-			}
-		int readed = fread(pBuffer, 1, 4096, pFile);
-		i = 0;
-
-		if (!isalpha(pBuffer[i])) 
-		{
-			WordMap::iterator it = wordMap.find(currentWord);//Возможно стоит заменить на вызов функции, но как быть с переменными?
-
-			if (it == wordMap.end())
-			{
-				wordMap.insert(std::make_pair(currentWord, 1));
-				currentWord = "";// что произойдет если текущее слово таким и будет("")?
-			}
-			else
-			{
-				it->second++;
-			}
-		}
-	    }
-
-		for (int k = 0;k != 1000;k++)
-		{
-		}
-
-		if (isalpha(pBuffer[i])) // Очень коряво выглядит
-		{
-			currentWord = currentWord + pBuffer[i];
-		}
-
-		for (int k = 0; k != 1000; k++)
-		{
-		}
-
-		if (isalpha(pBuffer[i]) && !isalpha(pBuffer[i + 1])) // определение конца слова, что будет при попытке обращения за пределы буффера?
-		{
-			
-			WordMap::iterator it = wordMap.find(currentWord);
-			
-			if (it == wordMap.end()) 
-			{
-				wordMap.insert(std::make_pair(currentWord, 1));
-				currentWord = "";
-			}
-			else
-			{
-				it->second++;
-			}
-		}
-
-		for (int k = 0; k != 1000; k++)
-		{
-		}
-
-		i++;
-	}
 
 	1 & 1 = 1
 	1 & 0 = 0
 	0 & 1 = 0
 	0 & 0 = 0
+
+
+	typedef boost::bimap < int, std::string > bm_type;
+	bm_type biWordMap;
+	bm_type::const_iterator biIter;
+
 --------------------------------------------------------------------------------------------------------------
 	*/
 
@@ -149,16 +100,17 @@ int main()
 		
 		else if (currentWord != "")
 		{
-			it = wordMap.find(currentWord);
+			biLeftIter = biWordMap.left.find(currentWord);
 
-			if (it == wordMap.end())
+			if (biLeftIter == biWordMap.left.end())
 			{
-				wordMap.insert(std::make_pair(currentWord, 1));
-				
+				biWordMap.insert(bm_type::value_type(currentWord, 1));
+				//(std::make_pair(currentWord, 1));
+				//bm.insert( bm_type::value_type(1, "one" ) );
 			}
 			else 
 			{
-				it->second++;
+//				biLeftIter->second++;
 
 			}
 			currentWord = "";
@@ -183,14 +135,14 @@ int main()
 	}
 
 
-	pFile = fopen("C:/dev/Books/Output.txt", "w");
+//	pFile = fopen("C:/dev/Books/Output.txt", "w");
 
-	for (it = wordMap.begin(); it != wordMap.end(); it++)
-	{
-		fprintf(pFile, "%s - %d\n", it->first.c_str(), it->second);
-	}
+//	for (it = wordMap.begin(); it != wordMap.end(); it++)
+//	{
+//		fprintf(pFile, "%s - %d\n", it->first.c_str(), it->second);
+//	}
 
-	fclose(pFile);
+//	fclose(pFile);
 	//отсортировать по количеству (Boost Bimap)
 	//убрать пустые (Done!)
 	//перевести все в нижний регистр (Done!)
