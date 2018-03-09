@@ -1,5 +1,13 @@
 #define  _CRT_SECURE_NO_WARNINGS
 
+#include <boost/bimap/unordered_set_of.hpp>
+#include <boost/bimap/multiset_of.hpp>
+
+#include <boost/optional.hpp>
+#include <boost/none.hpp>
+#include <boost/foreach.hpp>
+#include <boost/assign/list_inserter.hpp>
+#include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap.hpp>
 #include <stdio.h>
 #include <string.h>
@@ -33,21 +41,17 @@ public:
 	A::Iterator it1 = a.begin;
 	*it1 = 5;*/
 
-void SaveWord() 
-{
-
-}
-
-
-
 int main()
 {
-	typedef boost::bimap < std::string, int > bm_type;
+	typedef boost::bimap < std::string, boost::bimaps::multiset_of<int>> bm_type;
 	bm_type biWordMap;
+	typedef bm_type::value_type uniqueWord;
+	
 
 	//bm_type::const_iterator biIter;
 	bm_type::left_const_iterator biLeftIter;
 	bm_type::right_const_iterator biRightIter;
+	bm_type::const_iterator biIter;
 
 
 	//typedef std::map <std::string, int> WordMap;
@@ -104,17 +108,29 @@ int main()
 
 			if (biLeftIter == biWordMap.left.end())
 			{
-				biWordMap.insert(bm_type::value_type(currentWord, 1));
+				biWordMap.insert(uniqueWord(currentWord, 1));
 				//(std::make_pair(currentWord, 1));
-				//bm.insert( bm_type::value_type(1, "one" ) );
+				int a = biWordMap.size();
+								
 			}
 			else 
 			{
-//				biLeftIter->second++;
-
+		        biWordMap.left.equal_range(1);			
+				biLeftIter->second;
 			}
 			currentWord = "";
 		}
+
+
+		//if (it == wordMap.end())
+
+		//{
+
+		//	wordMap.insert(std::make_pair(currentWord, 1));
+
+		//	currentWord = "";
+		//}
+
 
 		if (i + 1 >= readed) // если дошли до конца буффера, считываем новый кусок
 		{
@@ -134,15 +150,14 @@ int main()
 		i++;
 	}
 
+	pFile = fopen("C:/dev/Books/BiOutput.txt", "w");
 
-//	pFile = fopen("C:/dev/Books/Output.txt", "w");
+	for (biLeftIter = biWordMap.left.begin(); biLeftIter != biWordMap.left.end(); biLeftIter++)
+	{
+		fprintf(pFile, "%s - %d\n", biLeftIter->first.c_str(), biLeftIter->second);
+	}
 
-//	for (it = wordMap.begin(); it != wordMap.end(); it++)
-//	{
-//		fprintf(pFile, "%s - %d\n", it->first.c_str(), it->second);
-//	}
-
-//	fclose(pFile);
+	fclose(pFile);
 	//отсортировать по количеству (Boost Bimap)
 	//убрать пустые (Done!)
 	//перевести все в нижний регистр (Done!)
